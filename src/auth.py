@@ -1,10 +1,27 @@
+"""
+Strava OAuth Authentication Handler
+===================================
+
+This module handles the secure OAuth 2.0 authentication process with Strava.
+
+What this file does:
+1. Generates the authorization URL for you to log in to Strava.
+2. Exchanges the authorization code for access and refresh tokens.
+3. Automatically refreshes the access token when it expires.
+4. Securely saves and loads tokens from a local JSON file (cache/strava_token.json).
+
+Usage:
+    Run this file directly to start the initial authentication flow:
+    python -m src.auth
+"""
+
 import requests
 import webbrowser
 from urllib.parse import urlencode
 import time
 from pathlib import Path
 import json
-from config import (
+from .config import (
     STRAVA_CLIENT_ID,
     STRAVA_CLIENT_SECRET,
     STRAVA_AUTH_URL,
@@ -123,7 +140,7 @@ class StravaAuth:
         # No valid token, need full authentication
         raise ValueError(
             "No valid token found. Please run the authentication flow first. "
-            "Use: python authenticate.py"
+            "Use: python -m src.auth"
         )
 
     def authenticate(self):

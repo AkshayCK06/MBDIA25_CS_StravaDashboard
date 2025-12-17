@@ -1,3 +1,20 @@
+"""
+Project Configuration Manager
+=============================
+
+This module centralizes all project configuration.
+
+What this file does:
+1. Loads environment variables (API credentials) from the .env file.
+2. Defines constant values for API endpoints, OAuth scopes, and redirect URIs.
+3. Calculates paths for project directories (data/, cache/, src/).
+4. Ensures necessary directories exist before the app runs.
+
+Usage:
+    Import constants from this module across other files:
+    from .config import DATA_DIR, STRAVA_CLIENT_ID
+"""
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -20,7 +37,7 @@ REDIRECT_URI = "http://localhost:8501"
 SCOPE = "read,activity:read_all"
 
 # Data Directories
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = Path(os.getenv('DATA_DIR', BASE_DIR / 'data'))
 CACHE_DIR = Path(os.getenv('CACHE_DIR', BASE_DIR / 'cache'))
 

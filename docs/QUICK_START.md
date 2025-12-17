@@ -13,16 +13,16 @@ This guide will get you up and running in 5 steps with NO hassle!
 ### On Mac/Linux:
 ```bash
 # Make setup script executable
-chmod +x setup.sh
+chmod +x scripts/setup.sh
 
 # Run setup
-./setup.sh
+./scripts/setup.sh
 ```
 
 ### On Windows:
 ```bash
 # Run setup
-setup.bat
+scripts\setup.bat
 ```
 
 ### Manual Setup (if scripts don't work):
@@ -90,8 +90,8 @@ notepad .env
 ### Edit the .env file:
 Replace the placeholder values with your actual credentials:
 ```
-STRAVA_CLIENT_ID=123456
-STRAVA_CLIENT_SECRET=abc123def456...
+STRAVA_CLIENT_ID=your_actual_client_id
+STRAVA_CLIENT_SECRET=your_actual_client_secret
 ```
 
 **Save and close** the file.
@@ -113,7 +113,7 @@ You should see `(venv)` in your terminal prompt.
 
 ### Run authentication:
 ```bash
-python auth.py
+python -m src.auth
 ```
 
 **What happens:**
@@ -135,7 +135,7 @@ Token saved to cache/strava_token.json
 ## Step 5: Fetch Your Data
 
 ```bash
-python data_manager.py
+python -m src.data_manager
 ```
 
 **What happens:**
@@ -150,15 +150,17 @@ python data_manager.py
 
 ## Verify Everything Works
 
-Test data processing:
-```bash
-python data_processing.py
-```
+You can run the analysis in two ways:
 
-You should see:
-- Summary statistics
-- Activity breakdown by type
-- Personal records
+*   **Terminal:** View summary statistics in the console.
+    ```bash
+    python -m src.data_processing
+    ```
+*   **Jupyter Notebook:** Open the interactive dashboard.
+    ```bash
+    jupyter notebook dashboard.ipynb
+    ```
+    *Make sure to select the `Python (venv)` kernel inside the notebook.*
 
 ---
 
@@ -190,6 +192,9 @@ venv\Scripts\activate      # Windows
 - Paste it into your browser manually
 - Continue with authorization
 
+### "No module named pandas" (or similar in Jupyter Notebook)
+- Ensure you have selected the `Python (venv)` kernel in your Jupyter Notebook.
+
 ---
 
 ## For Your Teammate (Siddhanth)
@@ -209,9 +214,9 @@ To run this project on another computer:
 ## Next Steps
 
 Once you have data:
-- Explore the CSV in Excel/Google Sheets: `data/activities.csv`
-- Start building the Streamlit dashboard (Week 2)
-- Add visualizations with Plotly (Week 2)
+- Explore the data in the `dashboard.ipynb`
+- Continue building advanced visualizations as per the `README.md`
+- Implement map visualizations with Folium
 
 ---
 
@@ -226,20 +231,14 @@ venv\Scripts\activate           # Windows
 deactivate
 
 # Re-authenticate
-python auth.py
+python -m src.auth
 
 # Refresh data from Strava
-python data_manager.py
+python -m src.data_manager
 
-# View statistics
-python data_processing.py
+# View statistics in terminal
+python -m src.data_processing
 
-# Check configuration
-python config.py
+# Run Jupyter Notebook dashboard
+jupyter notebook dashboard.ipynb
 ```
-
----
-
-## Need Help?
-
-Check the detailed [setup_guide.md](setup_guide.md) for more information.

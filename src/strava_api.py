@@ -1,8 +1,27 @@
+"""
+Strava API Wrapper
+==================
+
+This module provides a Pythonic interface to the Strava API v3.
+It abstracts away the details of making HTTP requests and handling responses.
+
+What this file does:
+1. Manages authentication headers for API requests.
+2. Provides methods to fetch athlete profile and statistics.
+3. Implements pagination logic to fetch all activities (not just the first page).
+4. Retrieves detailed activity data, including time-series streams (GPS, etc.).
+5. Handles API errors and rate limiting responses.
+
+Usage:
+    api = StravaAPI()
+    activities = api.get_activities(per_page=10)
+"""
+
 import requests
 from datetime import datetime
 from typing import List, Dict, Optional
-from auth import StravaAuth
-from config import STRAVA_API_BASE
+from .auth import StravaAuth
+from .config import STRAVA_API_BASE
 
 
 class StravaAPI:
@@ -198,4 +217,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nError: {e}")
         print("\nMake sure you've run authentication first:")
-        print("python auth.py")
+        print("python -m src.auth")

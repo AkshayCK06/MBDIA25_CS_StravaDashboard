@@ -1,3 +1,23 @@
+"""
+Strava Data Processing Logic
+============================
+
+This module contains the core analytical logic for the dashboard.
+It uses Pandas to process raw activity data into meaningful insights.
+
+What this file does:
+1. Cleans and preprocesses data (converting timestamps, handling missing values).
+2. Computes derived metrics (Pace, Speed in km/h, Moving Time in hours).
+3. Aggregates data by week and month for trend analysis.
+4. Identifies personal records (longest run, fastest ride, etc.).
+5. Provides filtering utilities for date ranges and activity types.
+
+Usage:
+    Import the ActivityProcessor class to analyze a DataFrame:
+    from .data_processing import ActivityProcessor
+    processor = ActivityProcessor(df)
+"""
+
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -245,7 +265,10 @@ class ActivityProcessor:
 
 if __name__ == "__main__":
     # Test with sample data
-    from data_manager import DataManager
+    try:
+        from .data_manager import DataManager
+    except ImportError:
+        from data_manager import DataManager
 
     try:
         dm = DataManager()
@@ -278,4 +301,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nError: {e}")
         print("\nMake sure you have cached data first:")
-        print("python data_manager.py")
+        print("python -m src.data_manager")

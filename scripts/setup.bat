@@ -66,9 +66,9 @@ echo    copy .env.example .env
 echo    REM Then edit .env with your credentials
 echo.
 echo 3. Run authentication:
-echo    python auth.py
+echo    python -m src.auth
 echo.
 echo 4. Fetch your data:
-echo    python data_manager.py
+echo    python -m src.data_manager
 echo.
 pause

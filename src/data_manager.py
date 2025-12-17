@@ -1,10 +1,29 @@
+
+"""
+Strava Data Management Layer
+============================
+
+This module handles the lifecycle of data within the application.
+It acts as a bridge between the API, the local file cache, and the data processing layer.
+
+What this file does:
+1. Fetches activities from the Strava API via strava_api.py.
+2. Caches raw data (JSON) and processed tables (CSV) to the data/ directory.
+3. Loads cached data into Pandas DataFrames for analysis.
+4. Manages detailed activity streams (GPS, Heart Rate) caching.
+
+Usage:
+    Run this file directly to fetch and update your data cache:
+    python -m src.data_manager
+"""
+
 import json
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional
-from strava_api import StravaAPI
-from config import DATA_DIR, CACHE_DIR
+from .strava_api import StravaAPI
+from .config import DATA_DIR, CACHE_DIR
 
 
 class DataManager:
@@ -244,4 +263,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nError: {e}")
         print("\nMake sure you've authenticated first:")
-        print("python auth.py")
+        print("python -m src.auth")
