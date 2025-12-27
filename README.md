@@ -26,8 +26,9 @@ This project is an interactive data dashboard designed to visualize and analyze 
   - Identification of personal records.
 - **Interactive Dashboard:**
   - Built with **Jupyter Notebook**.
-  - Interactive charts using **Plotly**.
-  - Geospatial visualizations using **Folium**.
+  - **Intelligent Analyst Interface (Smart Commands):** Simple commands to query and visualize data.
+  - **Interactive Maps:** Route visualization with Folium.
+  - **Smart Trends:** Pace analysis and heatmaps using Plotly.
 
 ## 🛠️ Technology Stack
 
@@ -145,13 +146,14 @@ You can run the analysis and view dashboards in two ways:
 
 ### Frontend Developer
 - ✅ Interactive Notebook Dashboard (`dashboard.ipynb`)
-- 🔜 Advanced Plotly visualizations
-- 🔜 Map integration with Folium
-- 🔜 UI/UX polish
+- ✅ Advanced Plotly visualizations
+- ✅ Map integration with Folium
+- ✅ Intelligent Analyst Interface (Smart Commands)
 
 ## 📚 Documentation
 - [Requirements](docs/reqdoc.md): Functional and technical requirements.
 - [Project Log](docs/PROJECT_CONVERSATION.md): Development history and decisions.
+- [Smart Commands Guide](docs/SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
 
 ## 📄 License
 This project is created for educational purposes as part of the MBDIA curriculum.

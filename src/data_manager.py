@@ -164,6 +164,7 @@ class DataManager:
                 'elev_low': activity.get('elev_low'),
                 'kudos_count': activity.get('kudos_count'),
                 'achievement_count': activity.get('achievement_count'),
+                'map_polyline': activity.get('map', {}).get('summary_polyline')
             }
             data.append(row)
 

@@ -78,6 +78,14 @@ class ActivityProcessor:
         if 'max_speed' in self.df.columns:
             self.df['max_speed_kmh'] = self.df['max_speed'] * 3.6
 
+        # Calculate average pace (min/km)
+        # Speed is m/s. 1 m/s = 60 m/min.
+        # Pace (min/km) = 1000 / (speed * 60)
+        if 'average_speed' in self.df.columns:
+             self.df['average_pace_min_km'] = self.df['average_speed'].apply(
+                lambda x: (1000 / (x * 60)) if pd.notnull(x) and x > 0 else None
+            )
+
         # Date components for analysis
         if 'start_date_local' in self.df.columns:
             self.df['date'] = self.df['start_date_local'].dt.date
@@ -96,6 +104,8 @@ class ActivityProcessor:
             'total_moving_time_hours': self.df['moving_time_hours'].sum() if 'moving_time_hours' in self.df else 0,
             'average_distance_km': self.df['distance_km'].mean() if 'distance_km' in self.df else 0,
             'average_speed_kmh': self.df['average_speed_kmh'].mean() if 'average_speed_kmh' in self.df else 0,
+            'max_speed_kmh': self.df['average_speed_kmh'].max() if 'average_speed_kmh' in self.df else 0,
+            'min_speed_kmh': self.df['average_speed_kmh'][self.df['average_speed_kmh'] > 0].min() if 'average_speed_kmh' in self.df else 0,
         }
 
         # Activity type breakdown

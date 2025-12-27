@@ -1,114 +1,79 @@
-# MBDIA25 CS - Strava Dashboard Project Presentation
+# 🎙️ Strava Dashboard Presentation Notes
 
-## Slide 1: Title Slide
-- **Project Title:** Strava Data Dashboard
-- **Subtitle:** Personal Activity Analysis & Visualization Tool
-- **Team Members:** Akshay & Siddhanth
-- **Course/Context:** MBDIA25 CS
+**Project**: Intelligent Strava Analyst
+**Presenters**: Akshay & Siddhanth
+**Goal**: Demonstrate a flexible, user-friendly tool for Strava data analysis using an Intelligent Analyst Interface.
 
 ---
 
-## Slide 2: Introduction & Problem Statement
-- **The Problem:**
-    - Strava's default interface offers limited free analysis.
-    - Users want custom metrics and offline access to their data.
-    - Need for a personalized view of fitness progress.
-- **The Solution:**
-    - A Python-based dashboard that connects to Strava.
-    - Fetches, stores, and visualizes activity data.
-    - Provides interactive insights (Global stats, Weekly trends, Detailed activity analysis).
+## 1. The Narrative (Storyline)
+
+**The Problem:**
+*   Most fitness dashboards are "Static." They show you what *they* want (generic charts), not what *you* want.
+*   Users suffer from "Dashboard Fatigue"—too many numbers, hard to find specific answers.
+*   "I just want to know if I'm running faster than last month."
+
+**The Solution:**
+*   We built the **"Intelligent Analyst."**
+*   It's not just a dashboard; it's a **Command Line Interface for your Fitness.**
+*   We used a **Smart Commands** approach: Simple, human-readable commands to generate complex insights instantly.
 
 ---
 
-## Slide 3: Analysis Phase (Requirements)
-*Discussion on how we determined what to build.*
+## 2. Division of Presentation
 
-- **Functional Requirements:**
-    1.  **Authentication:** Secure login using Strava OAuth 2.0.
-    2.  **Data Retrieval:** Fetch activities (Run, Ride, Swim) and detailed streams (Heart Rate, Elevation, GPS).
-    3.  **Data Persistence:** Cache data locally to avoid hitting API rate limits (100 req/15min).
-    4.  **Visualization:** Interactive charts for trends and individual activity performance.
-- **User Stories:**
-    - "As an athlete, I want to see my total distance for the year."
-    - "As a data lover, I want to download my raw data as CSV."
-    - "As a runner, I want to analyze my pace distribution."
+### **Part 1: The Engine (Akshay)**
+*   **Focus:** Backend, Architecture, Data.
+*   **Key Points:**
+    *   **OAuth 2.0:** "Securely connecting to Strava (Token management)."
+    *   **Data Manager:** "Smart caching system. We fetch raw JSON, process it, and store it locally so it works offline."
+    *   **Data Processing:** "We calculate metrics Strava doesn't give you directly, like 'Pace (min/km)' and 'Weekly Aggregates'."
+    *   **Architecture:** "Modular design. `src/visualizations.py` handles the math, `src/analyst.py` handles the user commands."
 
----
-
-## Slide 4: Design Phase (System Architecture)
-*High-level view of how the system works.*
-
-- **System Flow:**
-    1.  **Strava API (Cloud):** Source of truth.
-    2.  **Auth Module (`src/auth.py`):** Handles token exchange and refreshing.
-    3.  **Data Layer (`src/data_manager.py`):**
-        -   Fetches JSON data.
-        -   Saves/Loads from local `data/` folder (JSON & CSV).
-        -   Acts as a buffer between API and App.
-    4.  **Processing Layer (`src/data_processing.py`):**
-        -   Pandas-based cleaning.
-        -   Unit conversions (m/s to km/h).
-        -   Metric calculation (Weekly aggregations).
-    5.  **Presentation Layer (`dashboard.ipynb`):**
-        -   Jupyter Notebook interface.
-        -   Plotly for rendering interactive graphs.
+### **Part 2: The Experience (Siddhanth)**
+*   **Focus:** Smart Commands, Visualizations, Demo.
+*   **Key Points:**
+    *   "We moved away from a cluttered web app."
+    *   "We built a Smart Interface inside Jupyter Notebook."
+    *   **Live Demo:** (Run the `dashboard.ipynb` cells one by one).
 
 ---
 
-## Slide 5: Design Decisions & Trade-offs
-*Why we made specific technical choices.*
+## 3. The Live Demo Flow (Siddhanth)
 
-- **Local Caching vs. Live Fetching:**
-    - *Decision:* Implemented local caching (JSON/CSV).
-    - *Reason:* Strava has strict API limits. Caching allows rapid development and offline viewing.
-- **Jupyter Notebook vs. Web App (Streamlit):**
-    - *Decision:* Shifted from Streamlit to Jupyter Notebook + Plotly.
-    - *Reason:* Simplified the workflow. Removes the need for a separate web server process; keeps data analysis and visualization in one integrated environment.
-- **Pandas & Plotly:**
-    - *Reason:* Pandas offers robust time-series manipulation. Plotly provides interactivity (zoom/hover) which static libraries (Matplotlib) lack.
+*Open `dashboard.ipynb` and run these cells live.*
 
----
-
-## Slide 6: Implementation Details
-- **Tech Stack:**
-    - **Language:** Python 3.x
-    - **Libraries:**
-        - `requests`: HTTP calls.
-        - `pandas`: Data manipulation.
-        - `plotly`: Interactive visualization.
-        - `python-dotenv`: Security (API credentials).
-- **Key Modules:**
-    - `strava_api.py`: The low-level wrapper handling endpoints and pagination.
-    - `data_processing.py`: The business logic engine.
+1.  **Initialization:** "We import our tool as `strava`."
+2.  **Global Stats:** `strava.show("summary")`
+    *   *Say:* "Instantly, I get a snapshot of my entire history."
+3.  **The "Wow" Moment:** `strava.plot("map", index=0)`
+    *   *Say:* "Here is where it gets cool. We decode GPS polylines to show interactive maps right in the notebook."
+4.  **Comparison:** `strava.compare("month")`
+    *   *Say:* "Am I improving? This command instantly compares this month vs. last month."
+5.  **The Power of Filters:** `strava.filter(sport="Walk")`
+    *   *Say:* "Most dashboards mix everything. We can focus. Let's look ONLY at walks."
+6.  **Trend Analysis:** `strava.plot("trend", metric="pace")`
+    *   *Say:* "Now that we filtered for walks, this chart shows my Walking Pace trends over time."
 
 ---
 
-## Slide 7: Live Demonstration
-*Walkthrough of `dashboard.ipynb`*
+## 4. Future Improvements (The "Roadmap")
 
-- **Demo Points:**
-    1.  **Setup:** Showing the `.env` configuration (briefly).
-    2.  **Data Fetch:** Running `data_manager.py` to see new activities appear.
-    3.  **Dashboard:**
-        -   **Global Stats Table:** Total activities, distance, elevation.
-        -   **Activity Distribution:** Pie chart (Run vs. Ride).
-        -   **Weekly Progress:** Bar chart showing consistency.
-        -   **Recent Activities:** Sortable data frame.
+*Mention these at the end to show you have a vision.*
 
----
-
-## Slide 8: Future Scope
-- **Advanced Metrics:** Fatigue prediction, Fitness vs. Freshness graphs.
-- **Map Integration:** Visualizing GPS routes on interactive maps (Folium).
-- **Social Features:** Comparing stats with friends.
-- **Automated Reports:** Weekly email summaries.
+1.  **AI Narrator:**
+    *   "Integrate an LLM to read the data and write a text summary: 'Good job Sid, you ran 10% more this week!'"
+2.  **Natural Language Processing (NLP):**
+    *   "Instead of `strava.plot('map')`, allow typing: 'Show me the map of my longest run'."
+3.  **Goal Tracking:**
+    *   "Add a command like `strava.set_goal('100km')` and a progress bar."
+4.  **Social Comparison:**
+    *   "Since our Auth module handles tokens, we could compare stats with a friend."
 
 ---
 
-## Slide 9: Conclusion
-- Successfully built a robust, local data analysis tool.
-- Mastered OAuth 2.0 flow and API integration.
-- Created a scalable architecture separating data fetching from visualization.
-- Empowered the user with ownership of their fitness data.
+## 5. Technical Highlights (If Asked)
 
----
+*   **Polylines:** "We use the Google Polyline algorithm to decode compressed strings into lat/long coordinates."
+*   **Pandas:** "All filtering and aggregation happens in memory using Pandas for speed."
+*   **Plotly:** "We chose Plotly over Matplotlib for interactivity (zooming, hovering)."
