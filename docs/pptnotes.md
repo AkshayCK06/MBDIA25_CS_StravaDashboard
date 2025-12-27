@@ -16,7 +16,7 @@
 **The Solution:**
 *   We built the **"Intelligent Analyst."**
 *   It's not just a dashboard; it's a **Command Line Interface for your Fitness.**
-*   We used a **Smart Commands** approach: Simple, human-readable commands to generate complex insights instantly.
+*   We used a **Smart Commands** approach combined with **Local AI (Ollama)** for privacy-first analysis.
 
 ---
 
@@ -54,6 +54,8 @@
     *   *Say:* "Most dashboards mix everything. We can focus. Let's look ONLY at walks."
 6.  **Trend Analysis:** `strava.plot("trend", metric="pace")`
     *   *Say:* "Now that we filtered for walks, this chart shows my Walking Pace trends over time."
+7.  **AI Assistant:** `strava.ask("Give me a summary")`
+    *   *Say:* "Finally, we use our Local AI (running on Ollama) to generate a private summary of my performance."
 
 ---
 
@@ -61,13 +63,11 @@
 
 *Mention these at the end to show you have a vision.*
 
-1.  **AI Narrator:**
-    *   "Integrate an LLM to read the data and write a text summary: 'Good job Sid, you ran 10% more this week!'"
-2.  **Natural Language Processing (NLP):**
-    *   "Instead of `strava.plot('map')`, allow typing: 'Show me the map of my longest run'."
-3.  **Goal Tracking:**
+1.  **Voice Interface:**
+    *   "Connect the AI to a Speech-to-Text engine so you can talk to your data."
+2.  **Goal Tracking:**
     *   "Add a command like `strava.set_goal('100km')` and a progress bar."
-4.  **Social Comparison:**
+3.  **Social Comparison:**
     *   "Since our Auth module handles tokens, we could compare stats with a friend."
 
 ---

@@ -27,6 +27,7 @@ This project is an interactive data dashboard designed to visualize and analyze 
 - **Interactive Dashboard:**
   - Built with **Jupyter Notebook**.
   - **Intelligent Analyst Interface (Smart Commands):** Simple commands to query and visualize data.
+  - **AI Integration (Ollama):** Local LLM support to answer natural language questions about your data (Privacy-focused).
   - **Interactive Maps:** Route visualization with Folium.
   - **Smart Trends:** Pace analysis and heatmaps using Plotly.
 
@@ -64,6 +65,7 @@ For a fast setup, refer to [docs/QUICK_START.md](docs/QUICK_START.md).
 ### 1. Prerequisites
 - Python 3.9 or higher installed.
 - A Strava account.
+- [Ollama](https://ollama.com/) installed and running (for AI features).
 - API Credentials (Client ID & Secret) from [Strava API Settings](https://www.strava.com/settings/api).
 
 ### 2. Setup

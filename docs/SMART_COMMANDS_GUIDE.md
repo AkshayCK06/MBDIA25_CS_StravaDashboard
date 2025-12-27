@@ -66,6 +66,24 @@ strava.compare(period="month")
 
 ---
 
+## 5. Command: `ask()`
+**Purpose:** Interact with the Local AI Assistant (Ollama) to get natural language insights.
+
+### Syntax
+```python
+strava.ask(question)
+```
+
+### Options
+
+| Question | Description | Example |
+| :--- | :--- | :--- |
+| Any text | The AI analyzes your data summary and answers your question. | `strava.ask("Am I training too hard?")` |
+
+*Note: Requires Ollama to be running (`ollama serve`).*
+
+---
+
 ## 6. Command: `filter()`
 **Purpose:** Apply a global filter to the dataset. All subsequent `show()` and `plot()` commands will only use the filtered data.
 

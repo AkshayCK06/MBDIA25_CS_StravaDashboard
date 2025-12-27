@@ -20,6 +20,7 @@ Usage:
 
 from .data_manager import DataManager
 from .data_processing import ActivityProcessor
+from .ai_assistant import AIAssistant
 from . import visualizations as viz
 import pandas as pd
 from IPython.display import display, Markdown
@@ -27,12 +28,13 @@ from IPython.display import display, Markdown
 # Global state
 _dm = None
 _processor = None
+_ai = None
 _df = None        # The full, original dataframe
 _active_df = None # The filtered dataframe used for analysis
 
 def _ensure_initialized():
     """Lazy initialization of data components"""
-    global _dm, _processor, _df, _active_df
+    global _dm, _processor, _ai, _df, _active_df
     if _dm is None:
         _dm = DataManager()
         try:
@@ -46,15 +48,17 @@ def _ensure_initialized():
                 _active_df = _df.copy()
                 
             _processor = ActivityProcessor(_active_df)
+            _ai = AIAssistant(_active_df)
         except Exception as e:
             print(f"⚠️ Error initializing data: {e}")
             print("Please ensure you have run 'python -m src.data_manager' first.")
 
 def _update_processor():
     """Update the processor when the active dataframe changes"""
-    global _processor, _active_df
+    global _processor, _ai, _active_df
     if _active_df is not None:
         _processor = ActivityProcessor(_active_df)
+        _ai = AIAssistant(_active_df)
 
 def filter(sport=None, reset=False):
     """
@@ -79,6 +83,20 @@ def filter(sport=None, reset=False):
             print(f"✅ Filter applied: Activity Type = '{sport}' ({len(_active_df)} activities)")
     
     _update_processor()
+
+def ask(question):
+    """
+    Ask the Intelligent Assistant a question about your data.
+    
+    Args:
+        question (str): Your question (e.g., "Am I improving?", "Summary")
+    """
+    _ensure_initialized()
+    if _ai is None: return
+    
+    print(f"🤖 Asking Ollama ({_ai.model})...")
+    response = _ai.ask(question)
+    display(Markdown(response))
 
 def show(command="summary", **kwargs):
     """
