@@ -65,10 +65,8 @@ echo 2. Configure your Strava API credentials:
 echo    copy .env.example .env
 echo    REM Then edit .env with your credentials
 echo.
-echo 3. Run authentication:
-echo    python -m src.auth
-echo.
-echo 4. Fetch your data:
-echo    python -m src.data_manager
+echo 3. Open the Dashboard:
+echo    jupyter notebook dashboard.ipynb
+echo    REM Follow the setup instructions at the top of the notebook!
 echo.
 pause

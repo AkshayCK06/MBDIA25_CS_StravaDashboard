@@ -10,6 +10,11 @@ Before running any commands, you must import the analyst module.
 import src.analyst as strava
 ```
 
+To refresh your data from Strava:
+```python
+strava.refresh()
+```
+
 ---
 
 ## 2. Command: `show()`
@@ -43,13 +48,31 @@ strava.plot(what, **kwargs)
 | What | Description | Arguments | Example |
 | :--- | :--- | :--- | :--- |
 | `"progress"` | Displays a Bar Chart of distance covered per week. | None | `strava.plot("progress")` |
-| `"trend"` | Displays a Line Chart of a specific metric over time. | `metric` (str): 'distance', 'speed', 'pace', 'elevation'. | `strava.plot("trend", metric="pace")` |
+| `"trend"` | Displays a Line Chart of a specific metric over time. Default is **Speed (km/h)**. | `metric` (str): 'speed' (default), 'pace', 'distance', 'elevation'. | `strava.plot("trend", metric="pace")` |
 | `"map"` | Renders an interactive GPS map of a specific activity. | `index` (int, default=0): 0 is the latest activity, 1 is the previous, etc. | `strava.plot("map", index=0)` |
-| `"heatmap"` | Displays a heatmap of activity intensity (Month vs Day of Week). | `metric` (str, default='distance_km'): Metric to visualize intensity. | `strava.plot("heatmap", metric="distance_km")` |
+| `"heatmap"` | Displays a **Daily Activity Bar Chart** for the current month. | `metric` (str, default='distance_km'): 'distance_km' or 'steps'. | `strava.plot("heatmap", metric="steps")` |
 
 ---
 
-## 4. Command: `compare()`
+## 4. Command: `details()`
+**Purpose:** Drill down into the specific statistics of a single activity.
+
+### Syntax
+```python
+strava.details(index=0)
+```
+
+### Options
+
+| Argument | Description | Example |
+| :--- | :--- | :--- |
+| `index` | The index of the activity (0 = latest, 1 = second latest, etc.). | `strava.details(0)` |
+
+*Displays: Workout Type, Date, Time, Duration, Distance, Calories (Estimated if missing), Avg Pace, Avg HR.*
+
+---
+
+## 5. Command: `compare()`
 **Purpose:** Compare your performance between time periods.
 
 ### Syntax
@@ -61,12 +84,11 @@ strava.compare(period="month")
 
 | Period | Description | Example |
 | :--- | :--- | :--- |
-| `"month"` | Compares the current month vs. the previous month. | `strava.compare("month")` |
-| `"year"` | Compares the current year vs. the previous year. | `strava.compare("year")` |
+| `"month"` | Compares the **Current Month vs. Previous Month**. Shows separate charts for **Rides** and **Walks**, comparing Avg/Max/Min Speed. | `strava.compare("month")` |
 
 ---
 
-## 5. Command: `ask()`
+## 6. Command: `ask()`
 **Purpose:** Interact with the Local AI Assistant (Ollama) to get natural language insights.
 
 ### Syntax
@@ -84,7 +106,7 @@ strava.ask(question)
 
 ---
 
-## 6. Command: `filter()`
+## 7. Command: `filter()`
 **Purpose:** Apply a global filter to the dataset. All subsequent `show()` and `plot()` commands will only use the filtered data.
 
 ### Syntax
@@ -108,7 +130,7 @@ strava.filter(sport=None, reset=False)
 # 1. Focus only on runs
 strava.filter(sport="Run")
 
-# 2. See how your running pace is trending
+# 2. See how your running pace is trending (Lower is Faster!)
 strava.plot("trend", metric="pace")
 
 # 3. Check your weekly running distance
@@ -123,6 +145,6 @@ strava.filter(reset=True)
 # 2. Compare this month against last month
 strava.compare("month")
 
-# 3. See which days you are most active
+# 3. See which days you are most active this month
 strava.plot("heatmap")
 ```

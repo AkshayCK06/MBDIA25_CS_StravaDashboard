@@ -45,8 +45,62 @@ class ActivityProcessor:
         if 'start_date_local' in self.df.columns:
             self.df['start_date_local'] = pd.to_datetime(self.df['start_date_local'])
 
+        # Clean names (Translate German to English)
+        self._clean_names()
+
         # Add computed columns
         self._add_computed_metrics()
+
+    def _clean_names(self):
+        """Translate common German activity names to English"""
+        if 'name' not in self.df.columns:
+            return
+
+        # Direct full replacements for common patterns
+        full_replacements = {
+            'Spaziergang am Nachmittag': 'Afternoon Walk',
+            'Spaziergang am Morgen': 'Morning Walk',
+            'Spaziergang am Abend': 'Evening Walk',
+            'Lauf am Nachmittag': 'Afternoon Run',
+            'Lauf am Morgen': 'Morning Run',
+            'Lauf am Abend': 'Evening Run',
+            'Radfahrt am Nachmittag': 'Afternoon Ride',
+            'Radfahrt am Morgen': 'Morning Ride',
+            'Radfahrt am Abend': 'Evening Ride',
+        }
+        
+        # Word-based replacements
+        replacements = {
+            'Morgenlauf': 'Morning Run',
+            'Mittagslauf': 'Lunch Run',
+            'Abendlauf': 'Evening Run',
+            'Morgenfahrt': 'Morning Ride',
+            'Mittagsfahrt': 'Lunch Ride',
+            'Abendfahrt': 'Evening Ride',
+            'Abendspaziergang': 'Evening Walk',
+            'Morgenspaziergang': 'Morning Walk',
+            'Mittagsspaziergang': 'Lunch Walk',
+            'Spaziergang': 'Walk',
+            'Wanderung': 'Hike',
+            'Lauf': 'Run',
+            'Fahrt': 'Ride',
+            'Morgen': 'Morning',
+            'Mittag': 'Lunch',
+            'Abend': 'Evening',
+            'Nacht': 'Night',
+            'Radfahrt': 'Ride',
+            'am Nachmittag': 'in the Afternoon', # Fallback if full replacement missed
+            'am Morgen': 'in the Morning',
+            'am Abend': 'in the Evening'
+        }
+        
+        # Apply full replacements first (more specific)
+        for german, english in full_replacements.items():
+             self.df['name'] = self.df['name'].str.replace(german, english, regex=False)
+
+        # Apply word replacements
+        for german, english in replacements.items():
+            self.df['name'] = self.df['name'].str.replace(german, english, regex=False)
 
     def _add_computed_metrics(self):
         """Add computed metrics to the DataFrame"""
@@ -79,12 +133,45 @@ class ActivityProcessor:
             self.df['max_speed_kmh'] = self.df['max_speed'] * 3.6
 
         # Calculate average pace (min/km)
-        # Speed is m/s. 1 m/s = 60 m/min.
-        # Pace (min/km) = 1000 / (speed * 60)
         if 'average_speed' in self.df.columns:
              self.df['average_pace_min_km'] = self.df['average_speed'].apply(
                 lambda x: (1000 / (x * 60)) if pd.notnull(x) and x > 0 else None
             )
+
+        # Estimated Steps
+        # Standard formula: Steps = (Cadence * 2) * Moving Time (min)
+        # Cadence in Strava is usually rpm (steps/min for run is spm, but API often gives single-leg rpm for cycling or full spm for run? 
+        # Actually for Run, Strava returns cadence in steps per minute (SPM) * 2? No, usually SPM.
+        # But 'average_cadence' for Run is often full steps per minute (e.g. 170). 
+        # For Cycle, it's RPM (e.g. 80).
+        # We need to be careful.
+        # If type is Run/Walk, assume cadence is SPM (total steps).
+        # If type is Ride, steps don't make sense.
+        if 'average_cadence' in self.df.columns and 'moving_time_min' in self.df.columns and 'type' in self.df.columns:
+            self.df['estimated_steps'] = 0
+            
+            # Logic for Runs/Walks: Strava Cadence is usually full steps per minute (2 steps).
+            # Wait, standard Strava API documentation says: "average_cadence: The average cadence of the run in steps per minute or the ride in rotations per minute."
+            # So for Run/Walk, it IS steps per minute.
+            mask_run_walk = self.df['type'].isin(['Run', 'Walk', 'Hike'])
+            self.df.loc[mask_run_walk, 'estimated_steps'] = (
+                self.df.loc[mask_run_walk, 'average_cadence'] * self.df.loc[mask_run_walk, 'moving_time_min']
+            )
+            
+            # Fill NaN with 0
+            self.df['estimated_steps'] = self.df['estimated_steps'].fillna(0).astype(int)
+
+        # Kilocalories
+        # Prefer 'calories' if exists, else 'kilojoules' * 0.239 (rough estimate for work done, but human efficiency is ~24%, so 1 kJ mechanical ~ 1 kcal metabolic)
+        # Actually, for cyclists, 1 kJ output ~= 1 kcal burned (approx).
+        self.df['kilocalories'] = np.nan
+        
+        if 'calories' in self.df.columns:
+            self.df['kilocalories'] = self.df['calories']
+            
+        if 'kilojoules' in self.df.columns:
+            # If calories is NaN, try using kilojoules (1 kJ ~= 1 kcal for cycling approximation)
+            self.df['kilocalories'] = self.df['kilocalories'].fillna(self.df.get('kilojoules', 0))
 
         # Date components for analysis
         if 'start_date_local' in self.df.columns:

@@ -159,6 +159,7 @@ class DataManager:
                 'average_cadence': activity.get('average_cadence'),
                 'average_watts': activity.get('average_watts'),
                 'kilojoules': activity.get('kilojoules'),
+                'calories': activity.get('calories'),
                 'has_heartrate': activity.get('has_heartrate', False),
                 'elev_high': activity.get('elev_high'),
                 'elev_low': activity.get('elev_low'),

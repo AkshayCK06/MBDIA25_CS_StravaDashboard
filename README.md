@@ -11,25 +11,26 @@
 
 This project is an interactive data dashboard designed to visualize and analyze personal activity data from [Strava](https://www.strava.com/). Built using Python, it leverages the Strava API to fetch athlete activities, processes the data using Pandas, and presents insights through an interactive Jupyter Notebook.
 
-**Goal:** To demonstrate the end-to-end process of consuming a REST API, managing authentication (OAuth 2.0), processing complex datasets, and building a data visualization dashboard.
+**Goal:** To provide a powerful, private, and user-friendly interface for athletes to "talk" to their data using simple commands and local AI.
 
 ## ✨ Key Features
 
-- **Secure Authentication:** Implements Strava's OAuth 2.0 flow with automatic token refreshing.
-- **Data Management:** 
-  - Fetches detailed activity lists and specific streams (GPS, Heart Rate, Elevation).
-  - Smart caching system (JSON/CSV) to minimize API usage and rate limiting.
-- **Data Analysis:**
-  - Automated summary statistics (Total Distance, Elevation Gain, Moving Time).
-  - Activity type breakdown (Run, Ride, Swim, etc.).
-  - Weekly and monthly aggregations.
-  - Identification of personal records.
-- **Interactive Dashboard:**
-  - Built with **Jupyter Notebook**.
-  - **Intelligent Analyst Interface (Smart Commands):** Simple commands to query and visualize data.
-  - **AI Integration (Ollama):** Local LLM support to answer natural language questions about your data (Privacy-focused).
-  - **Interactive Maps:** Route visualization with Folium.
-  - **Smart Trends:** Pace analysis and heatmaps using Plotly.
+- **Secure, In-Notebook Authentication:** A simplified OAuth 2.0 flow that runs entirely within the Jupyter Notebook.
+- **Smart Command Interface:**
+  - `strava.refresh()`: Pull the latest data from the Strava API.
+  - `strava.show("summary")`: Get a high-level overview of all activities.
+  - `strava.compare("month")`: Compare performance (Avg/Max/Min Speed) for Rides and Walks against the previous month.
+  - `strava.plot("trend")`: View your performance trends over time (defaults to Speed in km/h).
+  - `strava.plot("heatmap")`: A monthly bar chart showing daily activity (e.g., distance or steps).
+  - `strava.details(index)`: Get detailed stats for a specific activity.
+- **AI Integration (Ollama):** Local LLM support (`strava.ask(...)`) to answer natural language questions about your data, ensuring 100% privacy.
+- **Enriched Data Metrics:**
+  - Automatic calculation of **Speed (km/h)** and **Pace (min/km)**.
+  - **Estimated Steps** for running and walking activities.
+  - **Estimated Calories** when data is missing from Strava.
+- **Interactive Visualizations:**
+  - Route maps, trend lines, comparison bars, and activity-type donuts.
+  - Intuitive graphs where "up" always means "better" (e.g., Pace charts are inverted).
 
 ## 🛠️ Technology Stack
 
@@ -38,6 +39,7 @@ This project is an interactive data dashboard designed to visualize and analyze 
 - **API Interaction:** Requests
 - **Visualization:** Plotly, Folium
 - **Dashboard Framework:** Jupyter Notebook
+- **Local AI:** Ollama with `mistral-nemo`
 - **Project Management:** UV (optional), standard pip requirements
 
 ## 📂 Project Structure
@@ -60,16 +62,16 @@ MBDIA25_CS_StravaDashboard/
 
 ## 🚀 Quick Start Guide
 
-For a fast setup, refer to [docs/QUICK_START.md](docs/QUICK_START.md).
+This project is now designed to be run entirely from the Jupyter Notebook.
 
 ### 1. Prerequisites
 - Python 3.9 or higher installed.
 - A Strava account.
-- [Ollama](https://ollama.com/) installed and running (for AI features).
-- API Credentials (Client ID & Secret) from [Strava API Settings](https://www.strava.com/settings/api).
+- **API Credentials:** Get your `Client ID` and `Secret` from [Strava API Settings](https://www.strava.com/settings/api).
+- **(Optional for AI features)** [Ollama](https://ollama.com/) installed and running with the `mistral-nemo` model (`ollama run mistral-nemo`).
 
 ### 2. Setup
-Clone the repository and run the automated setup script for your OS.
+Clone the repository and run the setup script for your OS to create the virtual environment and install dependencies.
 
 **Mac/Linux:**
 ```bash
@@ -82,61 +84,37 @@ scripts\setup.bat
 ```
 
 ### 3. Configuration
-Copy the example environment file and add your Strava credentials.
+Copy the `.env.example` file to `.env` and add your Strava credentials.
 ```bash
 cp .env.example .env
-# Edit .env and paste your STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET
+# Now, edit the .env file and paste your STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET
 ```
 
 ### 4. Running the Project
-Always ensure your virtual environment is activated (`source venv/bin/activate` or `venv\Scripts\activate`).
+Activate your virtual environment, then start Jupyter.
 
-**Step 1: Authenticate**
-This will open your browser to authorize the app.
+**Activate Environment:**
+- Mac/Linux: `source venv/bin/activate`
+- Windows: `venv\Scripts\activate`
+
+**Start Jupyter:**
 ```bash
-python -m src.auth
+jupyter notebook dashboard.ipynb
 ```
-
-**Step 2: Fetch Data**
-Downloads your activities and saves them locally.
-```bash
-python -m src.data_manager
-```
-
-**Step 3: Analyze & Visualize**
-You can run the analysis and view dashboards in two ways:
-
-*   **Terminal:** View summary statistics in the console.
-    ```bash
-    python -m src.data_processing
-    ```
-*   **Jupyter Notebook:** Open the interactive dashboard.
-    ```bash
-    jupyter notebook dashboard.ipynb
-    ```
-    *Make sure to select the `Python (venv)` kernel inside the notebook.*
+Inside the notebook, **make sure to select the `venv` kernel**. You will find cells at the top for a one-time setup (Authentication and Data Fetching). Run them, and your dashboard will be ready to use.
 
 ## ❓ Troubleshooting
 
 ### "Missing Strava API credentials"
-- Ensure you created the `.env` file (not just `.env.example`).
-- Verify you copied the correct Client ID and Secret from Strava.
+- Ensure you created the `.env` file from the `.env.example` template.
+- Verify you copied the correct Client ID and Secret from your Strava settings.
 
-### "No valid token found"
-- Run `python -m src.auth` to authenticate first.
-- Check that `cache/strava_token.json` exists.
-
-### "Token expired"
-- The script will automatically refresh expired tokens.
-- If it fails, delete `cache/strava_token.json` and re-authenticate.
-
-### Rate Limits
-- Strava API has rate limits (100 requests per 15 minutes, 1000 per day).
-- Use cached data during development to avoid hitting limits.
-- The `data_manager` uses local cache to reduce API calls.
+### "No valid token found" or Authentication Errors
+- Run the Authentication cell at the top of the `dashboard.ipynb` notebook.
+- Ensure you copy the full URL from your browser after authorizing, including the `&code=...` part.
 
 ### "No module named pandas" (or similar in Jupyter Notebook)
-- Ensure you have selected the `Python (venv)` kernel in your Jupyter Notebook.
+- Ensure you have selected the correct Jupyter kernel. It should be named `venv` or point to the Python interpreter inside the `venv` folder.
 
 ## 👥 Division of Work
 
@@ -154,7 +132,7 @@ You can run the analysis and view dashboards in two ways:
 
 ## 📚 Documentation
 - [Requirements](docs/reqdoc.md): Functional and technical requirements.
-- [Project Log](docs/PROJECT_CONVERSATION.md): Development history and decisions.
+- [Presentation Notes](docs/pptnotes.md): Notes for the project presentation.
 - [Smart Commands Guide](docs/SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
 
 ## 📄 License
