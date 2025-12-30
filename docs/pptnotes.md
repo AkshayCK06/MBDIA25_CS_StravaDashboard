@@ -64,18 +64,6 @@
     *   *Say:* "After seeing a spike on the trend, I can use our new `details` command to get a clean summary of any activity, including estimated calories if they were missing."
 8.  **AI Assistant:** `strava.ask("Give me a summary of my performance last month")`
     *   *Say:* "Finally, for open-ended questions, our local AI (running on Ollama) gives a private, conversational summary of my performance."
-2.  **Global Stats:** `strava.show("summary")`
-    *   *Say:* "Instantly, I get a snapshot of my entire history, with key metrics like total distance and average speed."
-3.  **Monthly Breakdown:** `strava.plot("heatmap", metric="steps")`
-    *   *Say:* "The old heatmap was confusing. We've replaced it with a **Daily Activity Chart**. Here, I can see my total steps for each day of the current month."
-4.  **Improved Comparison:** `strava.compare("month")`
-    *   *Say:* "Am I getting faster? We completely revamped this command. It now shows separate graphs for **Rides** and **Walks**, comparing key speed metrics like Average, Max, and Min speed against last month."
-5.  **Intuitive Trend Analysis:** `strava.plot("trend")`
-    *   *Say:* "Let's check my performance over time. The trend graph now defaults to **Speed in km/h**, which is much more intuitive. You can see my ride speeds are correctly shown as much higher than my walks. If you prefer `pace`, the graph automatically inverts so 'up' is always 'faster'."
-6.  **Drill-Down with Details:** `strava.details(index=0)`
-    *   *Say:* "After seeing a spike on the trend, I might want to know more. We added a new `details` command. This shows a clean summary of any activity: workout time, distance, heart rate, and even estimated calories if they were missing."
-7.  **AI Assistant:** `strava.ask("Give me a summary of my performance last month")`
-    *   *Say:* "Finally, for open-ended questions, we use our Local AI (running on Ollama with Mistral-Nemo) to generate a private, conversational summary of my performance."
 
 ---
 

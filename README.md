@@ -133,7 +133,7 @@ Inside the notebook, **make sure to select the `venv` kernel**. You will find ce
 ## 📚 Documentation
 - [Requirements](docs/reqdoc.md): Functional and technical requirements.
 - [Presentation Notes](docs/pptnotes.md): Notes for the project presentation.
-- [Smart Commands Guide](docs/SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
+- [Smart Commands Guide](SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
 
 ## 📄 License
 This project is created for educational purposes as part of the MBDIA curriculum.
