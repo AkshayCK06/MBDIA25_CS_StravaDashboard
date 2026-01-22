@@ -152,8 +152,10 @@ def show(command="summary", **kwargs):
         
     elif command == "recent":
         limit = kwargs.get('limit', 10)
-        recent = _active_df.sort_values('start_date_local', ascending=False).head(limit)
-        display(recent[['start_date_local', 'name', 'type', 'distance', 'total_elevation_gain']])
+        recent = _active_df.sort_values('start_date_local', ascending=False).head(limit).copy()
+        if 'distance_km' in recent.columns:
+            recent['distance_km'] = recent['distance_km'].round(2)
+        display(recent[['start_date_local', 'name', 'type', 'distance_km', 'total_elevation_gain']])
         
     elif command == "types":
         stats = _processor.get_summary_stats()
