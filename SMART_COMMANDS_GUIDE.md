@@ -1,6 +1,6 @@
-# Strava Intelligent Analyst: Smart Commands Guide
+# Smart Commands Guide
 
-This guide provides a comprehensive reference for the **Intelligent Analyst Interface** used in the Strava Dashboard. This system allows you to analyze your fitness data using simple, human-readable commands instead of writing complex Python code.
+This system allows you to analyze your fitness data using simple, human-readable commands instead of writing complex Python code.
 
 ## 1. Initialization
 
@@ -50,7 +50,7 @@ strava.plot(what, **kwargs)
 | `"progress"` | Displays a Bar Chart of distance covered per week. | None | `strava.plot("progress")` |
 | `"trend"` | Displays a Line Chart of a specific metric over time. Default is **Speed (km/h)**. | `metric` (str): 'speed' (default), 'pace', 'distance', 'elevation'. | `strava.plot("trend", metric="pace")` |
 | `"map"` | Renders an interactive GPS map of a specific activity. | `index` (int, default=0): 0 is the latest activity, 1 is the previous, etc. | `strava.plot("map", index=0)` |
-| `"heatmap"` | Displays a **Daily Activity Bar Chart** for the current month. | `metric` (str, default='distance_km'): 'distance_km' or 'steps'. | `strava.plot("heatmap", metric="steps")` |
+| `"heatmap"` | Displays a **Daily Activity Bar Chart** for a specific month (default: current). | `metric`: 'distance_km'/'steps'. `date`: 'YYYY-MM' (e.g. '2024-01'). | `strava.plot("heatmap", date="2024-01")` |
 
 ---
 

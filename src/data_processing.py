@@ -178,6 +178,8 @@ class ActivityProcessor:
             self.df['date'] = self.df['start_date_local'].dt.date
             self.df['year'] = self.df['start_date_local'].dt.year
             self.df['month'] = self.df['start_date_local'].dt.month
+            # Use ISO year to align with ISO week and avoid end-of-year overlapping issues
+            self.df['iso_year'] = self.df['start_date_local'].dt.isocalendar().year
             self.df['week'] = self.df['start_date_local'].dt.isocalendar().week
             self.df['day_of_week'] = self.df['start_date_local'].dt.day_name()
             self.df['hour'] = self.df['start_date_local'].dt.hour
@@ -234,10 +236,10 @@ class ActivityProcessor:
 
     def get_weekly_aggregates(self) -> pd.DataFrame:
         """Get weekly aggregated statistics"""
-        if 'year' not in self.df.columns or 'week' not in self.df.columns:
+        if 'iso_year' not in self.df.columns or 'week' not in self.df.columns:
             return pd.DataFrame()
 
-        weekly = self.df.groupby(['year', 'week']).agg({
+        weekly = self.df.groupby(['iso_year', 'week']).agg({
             'distance_km': 'sum',
             'moving_time_hours': 'sum',
             'total_elevation_gain': 'sum',

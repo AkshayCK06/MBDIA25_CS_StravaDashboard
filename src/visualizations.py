@@ -65,143 +65,11 @@ def plot_weekly_progress(weekly_df: pd.DataFrame):
 
     # Ensure date column for x-axis
     if 'week_start' not in weekly_df.columns:
+        # Check for iso_year (preferred) or year
+        year_col = 'iso_year' if 'iso_year' in weekly_df.columns else 'year'
+        
         weekly_df['week_start'] = weekly_df.apply(
-            lambda row: pd.to_datetime(f"{int(row['year'])}-W{int(row['week'])}-1", format="%G-W%V-%u"), 
-            axis=1
-        )
-    
-    fig = px.bar(
-        weekly_df, 
-        x='week_start', 
-        y='distance_km', 
-        title='Weekly Distance Progress',
-        labels={'week_start': 'Week', 'distance_km': 'Distance (km)'},
-        color_discrete_sequence=['#FC4C02'] # Strava Orange
-    )
-    fig.update_layout(xaxis_title="Week", yaxis_title="Distance (km)")
-    fig.show()
-
-def plot_activity_map(activity_row: pd.Series):
-    """Plot an interactive map for a single activity using its polyline"""
-    line = activity_row.get('map_polyline')
-    
-    if pd.isna(line) or not line:
-        print(f"No map data available for activity: {activity_row['name']}")
-        return None
-
-    # Decode polyline
-    coordinates = polyline.decode(line)
-    
-    # Create map centered at start
-    start_point = coordinates[0]
-    m = folium.Map(location=start_point, zoom_start=14, tiles='CartoDB positron')
-    
-    # Add path
-    folium.PolyLine(coordinates, color='#FC4C02', weight=5, opacity=0.8).add_to(m)
-    
-    # Add start/end markers
-    folium.Marker(coordinates[0], popup='Start', icon=folium.Icon(color='green', icon='play')).add_to(m)
-    folium.Marker(coordinates[-1], popup='End', icon=folium.Icon(color='red', icon='stop')).add_to(m)
-    
-    # Fit bounds
-    m.fit_bounds([min(coordinates), max(coordinates)])
-    
-    return m
-
-def plot_metric_trend(df: pd.DataFrame, metric='distance', title=None):
-    """Plot a trend line for a specific metric over time"""
-    if df.empty:
-        return
-        
-    df = df.sort_values('start_date_local')
-    
-    # Check if we have multiple types to compare
-    has_multiple_types = 'type' in df.columns and df['type'].nunique() > 1
-    
-    fig = px.line(
-        df, 
-        x='start_date_local', 
-        y=metric, 
-        color='type' if has_multiple_types else None,
-        title=title or f'{metric.replace("_", " ").title()} Over Time',
-        template='plotly_white'
-    )
-    
-    # Use Strava Orange only if it's a single line
-    if not has_multiple_types:
-        fig.update_traces(line_color='#FC4C02', line_width=2)
-        
-    fig.show()
-
-"""
-Strava Visualization Toolbox
-============================
-
-This module contains reusable functions for creating interactive visualizations
-of Strava data. It abstracts the complexity of Plotly and Folium.
-
-What this file does:
-1. Provides functions for common charts (Pie, Bar, Line).
-2. Handles map generation from Strava polylines.
-3. Formats data specifically for Jupyter Notebook display.
-
-Usage:
-    from src.visualizations import plot_activity_map, plot_weekly_progress
-    plot_activity_map(df.iloc[0])
-"""
-
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import folium
-import polyline
-from IPython.display import display, HTML
-
-def plot_summary_table(stats: dict):
-    """Display a clean HTML table of global statistics"""
-    summary_data = {
-        'Metric': ['Total Activities', 'Total Distance', 'Total Elevation', 'Moving Time', 'Avg Speed', 'Max Speed', 'Min Speed'],
-        'Value': [
-            f"{stats['total_activities']}",
-            f"{stats['total_distance_km']:.1f} km",
-            f"{stats['total_elevation_gain_m']:.0f} m",
-            f"{stats['total_moving_time_hours']:.1f} hrs",
-            f"{stats['average_speed_kmh']:.1f} km/h",
-            f"{stats['max_speed_kmh']:.1f} km/h",
-            f"{stats['min_speed_kmh']:.1f} km/h"
-        ]
-    }
-    df_stats = pd.DataFrame(summary_data)
-    display(HTML(df_stats.to_html(index=False, classes='table table-striped')))
-
-def plot_activity_type_donut(stats: dict):
-    """Plot distribution of activity types"""
-    if 'activity_types' not in stats or not stats['activity_types']:
-        print("No activity type data available.")
-        return
-        
-    type_df = pd.DataFrame(list(stats['activity_types'].items()), columns=['Type', 'Count'])
-    fig = px.pie(
-        type_df, 
-        values='Count', 
-        names='Type', 
-        title='Activities by Type',
-        hole=0.4,
-        color_discrete_sequence=px.colors.qualitative.Vivid
-    )
-    fig.update_layout(margin=dict(t=40, b=0, l=0, r=0))
-    fig.show()
-
-def plot_weekly_progress(weekly_df: pd.DataFrame):
-    """Plot weekly distance bar chart"""
-    if weekly_df.empty:
-        print("No weekly data available.")
-        return
-
-    # Ensure date column for x-axis
-    if 'week_start' not in weekly_df.columns:
-        weekly_df['week_start'] = weekly_df.apply(
-            lambda row: pd.to_datetime(f"{int(row['year'])}-W{int(row['week'])}-1", format="%G-W%V-%u"), 
+            lambda row: pd.to_datetime(f"{int(row[year_col])}-W{int(row['week'])}-1", format="%G-W%V-%u"), 
             axis=1
         )
     
@@ -278,23 +146,36 @@ def plot_metric_trend(df: pd.DataFrame, metric='distance', title=None):
         
     fig.show()
 
-def plot_heatmap(df: pd.DataFrame, metric='distance_km'):
+def plot_heatmap(df: pd.DataFrame, metric='distance_km', date=None):
     """
-    Plot daily activity for the current month (Bar Graph).
-    Replaces the old heatmap as per user request.
+    Plot daily activity for a specific month (Bar Graph).
+    Default: Current month.
     """
     if df.empty: return
 
-    # Filter for current month/year
-    now = pd.Timestamp.now()
-    # Use the latest month in data if current month has no data, or just strict current month?
-    # Strict current month is safer for "This Month" context.
-    
-    current_month_df = df[(df['month'] == now.month) & (df['year'] == now.year)].copy()
+    # Determine target month/year
+    if date:
+        try:
+            target_dt = pd.to_datetime(date)
+            target_month = target_dt.month
+            target_year = target_dt.year
+            display_date_str = target_dt.strftime('%B %Y')
+            period_str = target_dt.strftime('%Y-%m')
+        except Exception:
+            print(f"Invalid date format: '{date}'. Please use 'YYYY-MM' (e.g., '2024-01').")
+            return
+    else:
+        now = pd.Timestamp.now()
+        target_month = now.month
+        target_year = now.year
+        display_date_str = now.strftime('%B %Y')
+        period_str = now.strftime('%Y-%m')
+
+    # Filter data
+    current_month_df = df[(df['month'] == target_month) & (df['year'] == target_year)].copy()
     
     if current_month_df.empty:
-        print(f"No activities found for this month ({now.strftime('%B %Y')}).")
-        # Optional: Try previous month if empty? No, sticking to specific request.
+        print(f"No activities found for {display_date_str}.")
         return
 
     # Check if we can use steps
@@ -311,7 +192,7 @@ def plot_heatmap(df: pd.DataFrame, metric='distance_km'):
     daily_stats = current_month_df.groupby('day')[metric].sum().reset_index()
     
     # Ensure all days are present
-    days_in_month = pd.Period(now.strftime('%Y-%m')).days_in_month
+    days_in_month = pd.Period(period_str).days_in_month
     all_days = pd.DataFrame({'day': range(1, days_in_month + 1)})
     daily_stats = pd.merge(all_days, daily_stats, on='day', how='left').fillna(0)
     
@@ -324,7 +205,7 @@ def plot_heatmap(df: pd.DataFrame, metric='distance_km'):
         daily_stats,
         x='day',
         y=metric,
-        title=f"Daily Activity ({title_metric}) - {now.strftime('%B %Y')}",
+        title=f"Daily Activity ({title_metric}) - {display_date_str}",
         labels={'day': 'Day of Month', metric: title_metric},
         color_discrete_sequence=['#FC4C02']
     )
@@ -402,5 +283,3 @@ def plot_comparison(df: pd.DataFrame, period='month'):
         fig.update_yaxes(matches=None, showticklabels=True)
         fig.update_xaxes(title=None)
         fig.show()
-
-
