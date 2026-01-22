@@ -197,8 +197,9 @@ def plot(what="progress", **kwargs):
     elif what == "heatmap":
         # Pass the metric to heatmap (now Daily Activity Bar), default to distance_km
         metric = kwargs.get('metric', 'distance_km')
+        date = kwargs.get('date', None)
         # Use processor.df for date components
-        viz.plot_heatmap(_processor.df, metric=metric)
+        viz.plot_heatmap(_processor.df, metric=metric, date=date)
 
     elif what == "map":
         idx = kwargs.get('index', 0)
