@@ -3,7 +3,8 @@
 **Course:** Computer Science (CS)  
 **Program:** Master of Business Development, Innovation and Administration (MBDIA WS25)  
 **Institution:** Hochschule Emden/Leer  
-**Authors:** Siddhanth Sharma & Akshay CK
+**Authors:** Siddhanth Sharma(7027189) and Akshay Chandrashekar Kashyap(7027188)
+
 
 ---
 
