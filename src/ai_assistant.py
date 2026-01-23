@@ -12,18 +12,19 @@ import requests
 import json
 import pandas as pd
 from datetime import datetime
+from .config import OLLAMA_MODEL
 
 class AIAssistant:
-    def __init__(self, df, model="mistral-nemo:latest"):
+    def __init__(self, df, model=None):
         """
         Initialize the AI with the athlete's activity data.
         
         Args:
             df (pd.DataFrame): The dataframe containing activity data.
-            model (str): The name of the local Ollama model to use.
+            model (str): The name of the local Ollama model to use. Defaults to config.OLLAMA_MODEL.
         """
         self.df = df
-        self.model = model
+        self.model = model or OLLAMA_MODEL
         self.api_url = "http://localhost:11434/api/generate"
         self._context_cache = None
 

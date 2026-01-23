@@ -16,21 +16,24 @@ This project is an interactive data dashboard designed to visualize and analyze 
 ## ✨ Key Features
 
 - **Secure, In-Notebook Authentication:** A simplified OAuth 2.0 flow that runs entirely within the Jupyter Notebook.
-- **Smart Command Interface:**
-  - `strava.refresh()`: Pull the latest data from the Strava API.
+- **Smart Command Interface (`strava`):**
+  - `strava.refresh()`: Pull the latest data from the Strava API and update the cache.
+  - `strava.filter(sport="Run")`: Filter the dashboard for specific sports (e.g., Run, Ride, Walk). Use `reset=True` to clear.
   - `strava.show("summary")`: Get a high-level overview of all activities.
   - `strava.compare("month")`: Compare performance (Avg/Max/Min Speed) for Rides and Walks against the previous month.
-  - `strava.plot("trend")`: View your performance trends over time (defaults to Speed in km/h).
-  - `strava.plot("heatmap")`: A monthly bar chart showing daily activity (e.g., distance or steps).
-  - `strava.details(index)`: Get detailed stats for a specific activity.
-- **AI Integration (Ollama):** Local LLM support (`strava.ask(...)`) to answer natural language questions about your data, ensuring 100% privacy.
-- **Enriched Data Metrics:**
-  - Automatic calculation of **Speed (km/h)** and **Pace (min/km)**.
-  - **Estimated Steps** for running and walking activities.
-  - **Estimated Calories** when data is missing from Strava.
+  - `strava.plot("trend")`: View performance trends over time (Speed, Pace, or Distance).
+  - `strava.plot("heatmap")`: A monthly bar chart showing daily activity levels.
+  - `strava.plot("map", index=0)`: Interactive route map for your latest activities.
+  - `strava.details(index)`: Detailed stats for a specific activity, including estimated calories and timing.
+- **AI Integration (Ollama):** Local LLM support (`strava.ask(...)`) to answer natural language questions about your data, acting as a personal fitness coach while ensuring 100% privacy.
+- **Advanced Data Enrichment:**
+  - **Auto-Translation:** Automatically translates German activity names (e.g., "Morgenlauf") to English.
+  - **Metric Calculation:** Automatic calculation of **Speed (km/h)** and **Pace (min/km)**.
+  - **Estimated Steps:** Derived from cadence data for running and walking activities.
+  - **Smart Calories:** Estimated metabolic burn for activities where Strava data is missing.
 - **Interactive Visualizations:**
   - Route maps, trend lines, comparison bars, and activity-type donuts.
-  - Intuitive graphs where "up" always means "better" (e.g., Pace charts are inverted).
+  - Intuitive graphs where "up" always means "better" (e.g., Pace charts are automatically inverted).
 
 ## 🛠️ Technology Stack
 
@@ -47,31 +50,31 @@ This project is an interactive data dashboard designed to visualize and analyze 
 ```
 MBDIA25_CS_StravaDashboard/
 ├── src/                    # Source code package
+│   ├── ai_assistant.py     # Ollama AI integration logic
+│   ├── analyst.py          # Intelligent Analyst Interface (Smart Commands)
 │   ├── auth.py             # OAuth 2.0 authentication handler
 │   ├── config.py           # Configuration and path management
 │   ├── data_manager.py     # Data fetching and caching logic
-│   ├── data_processing.py  # Pandas analysis and metrics
-│   └── strava_api.py       # Strava API wrapper
+│   ├── data_processing.py  # Pandas analysis and metrics enrichment
+│   ├── strava_api.py       # Strava API wrapper
+│   └── visualizations.py   # Plotly and Folium chart generators
 ├── docs/                   # Project documentation & requirements
 ├── scripts/                # Setup scripts (Mac/Linux/Windows)
-├── data/                   # Cached activity data (Local only, ignored by Git)
-├── cache/                  # Auth tokens (Local only, ignored by Git)
+├── data/                   # Cached activity data (Local only)
+├── cache/                  # Auth tokens (Local only)
 ├── dashboard.ipynb         # Interactive Jupyter Notebook Dashboard
 └── requirements.txt        # Python dependencies
 ```
 
 ## 🚀 Quick Start Guide
 
-This project is now designed to be run entirely from the Jupyter Notebook.
-
 ### 1. Prerequisites
 - Python 3.9 or higher installed.
-- A Strava account.
-- **API Credentials:** Get your `Client ID` and `Secret` from [Strava API Settings](https://www.strava.com/settings/api).
-- **(Optional for AI features)** [Ollama](https://ollama.com/) installed and running with the `mistral-nemo` model (`ollama run mistral-nemo`).
+- A Strava account and [API Credentials](https://www.strava.com/settings/api).
+- **For AI Features:** [Ollama](https://ollama.com/) installed and running.
 
 ### 2. Setup
-Clone the repository and run the setup script for your OS to create the virtual environment and install dependencies.
+Clone the repository and run the setup script for your OS.
 
 **Mac/Linux:**
 ```bash
@@ -84,56 +87,78 @@ scripts\setup.bat
 ```
 
 ### 3. Configuration
-Copy the `.env.example` file to `.env` and add your Strava credentials.
+Copy `.env.example` to `.env` and add your `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET`.
+
+### 4. Running the Dashboard
+Activate your environment and start Jupyter:
 ```bash
-cp .env.example .env
-# Now, edit the .env file and paste your STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET
-```
-
-### 4. Running the Project
-Activate your virtual environment, then start Jupyter.
-
-**Activate Environment:**
-- Mac/Linux: `source venv/bin/activate`
-- Windows: `venv\Scripts\activate`
-
-**Start Jupyter:**
-```bash
+# Mac/Linux
+source venv/bin/activate
 jupyter notebook dashboard.ipynb
 ```
-Inside the notebook, **make sure to select the `venv` kernel**. You will find cells at the top for a one-time setup (Authentication and Data Fetching). Run them, and your dashboard will be ready to use.
+Inside the notebook, select the **venv** kernel and run the initialization cells at the top.
 
-## ❓ Troubleshooting
+---
 
-### "Missing Strava API credentials"
-- Ensure you created the `.env` file from the `.env.example` template.
-- Verify you copied the correct Client ID and Secret from your Strava settings.
+## 🤖 Setting up the AI Assistant (`strava.ask`)
 
-### "No valid token found" or Authentication Errors
-- Run the Authentication cell at the top of the `dashboard.ipynb` notebook.
-- Ensure you copy the full URL from your browser after authorizing, including the `&code=...` part.
+The dashboard includes a local AI coach that uses Ollama to analyze your data privately.
 
-### "No module named pandas" (or similar in Jupyter Notebook)
-- Ensure you have selected the correct Jupyter kernel. It should be named `venv` or point to the Python interpreter inside the `venv` folder.
+### 1. Install Ollama
+Download and install Ollama from [ollama.com](https://ollama.com/).
+
+### 2. Download the Model
+Open your terminal and pull the Mistral Nemo model:
+```bash
+ollama pull mistral-nemo
+```
+
+### 3. Start the Ollama Server
+Ensure Ollama is running in the background. Usually, it starts automatically, but you can force it with:
+```bash
+ollama serve
+```
+
+### ⚡ Lite Mode (Optional)
+If `mistral-nemo` is too slow or you have limited RAM (under 8GB), you can use a lighter model like `llama3.2`.
+
+1. **Pull the lighter model:**
+   ```bash
+   ollama pull llama3.2
+   ```
+2. **Configure `.env`:**
+   Add or update this line in your `.env` file:
+   ```env
+   OLLAMA_MODEL=llama3.2
+   ```
+
+### 4. Talk to your Data
+In the `dashboard.ipynb`, you can now use natural language:
+```python
+strava.ask("How has my running pace improved over the last 3 months?")
+strava.ask("Give me a summary of my most active week.")
+```
+
+---
 
 ## 👥 Division of Work
 
 ### Backend Developer
-- ✅ OAuth authentication (`auth.py`)
-- ✅ API integration (`strava_api.py`)
-- ✅ Data caching (`data_manager.py`)
-- ✅ Data processing (`data_processing.py`)
+- ✅ OAuth authentication & API integration
+- ✅ Data caching & Lifecycle management
+- ✅ Metric enrichment & Auto-translation logic
+- ✅ Ollama AI Assistant integration
 
 ### Frontend Developer
-- ✅ Interactive Notebook Dashboard (`dashboard.ipynb`)
-- ✅ Advanced Plotly visualizations
-- ✅ Map integration with Folium
-- ✅ Intelligent Analyst Interface (Smart Commands)
+- ✅ Interactive Notebook Dashboard UI
+- ✅ Smart Command Interface (`analyst.py`)
+- ✅ Plotly visualizations & Folium Map integration
+- ✅ Comparative Performance Analysis
 
 ## 📚 Documentation
+- [Smart Commands Guide](SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
 - [Requirements](docs/reqdoc.md): Functional and technical requirements.
 - [Presentation Notes](docs/pptnotes.md): Notes for the project presentation.
-- [Smart Commands Guide](SMART_COMMANDS_GUIDE.md): Reference for all available dashboard commands.
 
 ## 📄 License
 This project is created for educational purposes as part of the MBDIA curriculum.

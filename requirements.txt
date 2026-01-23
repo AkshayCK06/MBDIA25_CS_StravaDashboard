@@ -8,5 +8,4 @@ numpy
 ipykernel
 ipython
 jinja2
-openai
 nbformat
